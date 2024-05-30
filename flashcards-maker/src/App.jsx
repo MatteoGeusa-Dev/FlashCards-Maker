@@ -51,7 +51,7 @@ function App() {
           ...folder,
           flashcards: [...folder.flashcards, {
             question: newFlashcard.question,
-            answer: newFlashcard.answer.replace(/\n/g, '<br>')
+            answer: newFlashcard.answer.replace(/\n/g, '\n')
           }],
         };
       }
@@ -162,17 +162,16 @@ const handleEditFlashcard = (index, updatedFlashcard) => {
         width: '100%', // Imposta la larghezza della textarea al 100% del contenitore
         resize: 'none', // Rendi la textarea non ridimensionabile
         fontSize: '16px', // Imposta il carattere a 16px
+        height:"650px",
         fontFamily: 'Arial, sans-serif', // Imposta il tipo di carattere
         lineHeight: '1.6', // Imposta l'altezza della riga per una migliore leggibilità
         padding: '10px', // Aggiungi spaziatura intorno al testo
-        height:"650px",
         boxSizing: 'border-box', // Include il padding nella larghezza totale della textarea
       }} 
     />
     <button className="Modal__CloseButton" onClick={() => setShowModal(false)}>Close</button>
   </div>
 </Modal>
-
 
 
     </div>
