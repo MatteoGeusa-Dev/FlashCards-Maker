@@ -174,16 +174,16 @@ hr{
   border-radius: 20px; /* Bordi arrotondati */
   padding: 20px; /* Spaziatura interna */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombra sottile */
-  max-width: 600px; /* Ridimensiona la larghezza */
-  max-height: 400px; /* Ridimensiona l'altezza */
 }
 
 .Modal__CloseButton {
-  background: none;
-  border: none;
-  font-size: 20px;
+  padding: 10px 15px;
   cursor: pointer;
-  color: #888;
+  font-size: large;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  transition: background 0.3s ease;
   background-color: #88a8cc; /* Blu pastello più chiaro */
 }
 

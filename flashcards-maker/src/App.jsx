@@ -49,7 +49,10 @@ function App() {
       if (folder.name === targetFolderName) {
         return {
           ...folder,
-          flashcards: [...folder.flashcards, newFlashcard],
+          flashcards: [...folder.flashcards, {
+            question: newFlashcard.question,
+            answer: newFlashcard.answer.replace(/\n/g, '<br>')
+          }],
         };
       }
       return folder;
@@ -58,25 +61,26 @@ function App() {
     setNewFlashcard({ question: '', answer: '' });
     setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
   };
+  
 
-  const handleEditFlashcard = (index) => {
-    const updatedFlashcard = prompt("Inserisci la modifica selezionata e dividi la domanda e la risposta con una virgola (es., 'Nuova Domanda, Nuova Risposta'):");
-    if (updatedFlashcard) {
-      const [updatedQuestion, updatedAnswer] = updatedFlashcard.split(',').map(item => item.trim());
-      const targetFolderName = selectedFolder ? selectedFolder.name : 'Non categorizzate';
-      const updatedFolders = folders.map((folder) => {
-        const updatedFlashcards = folder.flashcards.map((flashcard, i) => {
-          if (i === index) {
-            return { ...flashcard, question: updatedQuestion, answer: updatedAnswer };
-          }
-          return flashcard;
-        });
-        return { ...folder, flashcards: updatedFlashcards };
-      });
-      setFolders(updatedFolders);
-      setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
-    }
-  };
+const handleEditFlashcard = (index, updatedFlashcard) => {
+  const { question, answer } = updatedFlashcard;
+  const targetFolderName = selectedFolder ? selectedFolder.name : 'Non categorizzate';
+  const updatedFolders = folders.map((folder) => {
+    const updatedFlashcards = folder.flashcards.map((flashcard, i) => {
+      if (i === index) {
+        return { ...flashcard, question, answer };
+      }
+      return flashcard;
+    });
+    return { ...folder, flashcards: updatedFlashcards };
+  });
+  setFolders(updatedFolders);
+  setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
+};
+
+  
+  
   
   
   const handleDeleteFlashcard = (index) => {
@@ -143,16 +147,34 @@ function App() {
         </div>
       </main>
       <Modal
-        isOpen={showModal}
-        onRequestClose={() => setShowModal(false)}
-        contentLabel="Flashcard Answer"
-      >
-        <div>
-          <h2>Flashcard Answer</h2>
-          <p>{modalContent}</p>
-          <button onClick={() => setShowModal(false)}>Close</button>
-        </div>
-      </Modal>
+  isOpen={showModal}
+  onRequestClose={() => setShowModal(false)}
+  contentLabel="Flashcard Answer"
+>
+  <div>
+    <h2>Flashcard Answer</h2>
+    <textarea
+      value={modalContent}
+      readOnly
+      rows={10} // Imposta il numero di righe desiderato
+      wrap="soft" // Imposta il wrapping del testo su "soft"
+      style={{ 
+        width: '100%', // Imposta la larghezza della textarea al 100% del contenitore
+        resize: 'none', // Rendi la textarea non ridimensionabile
+        fontSize: '16px', // Imposta il carattere a 16px
+        fontFamily: 'Arial, sans-serif', // Imposta il tipo di carattere
+        lineHeight: '1.6', // Imposta l'altezza della riga per una migliore leggibilità
+        padding: '10px', // Aggiungi spaziatura intorno al testo
+        height:"650px",
+        boxSizing: 'border-box', // Include il padding nella larghezza totale della textarea
+      }} 
+    />
+    <button className="Modal__CloseButton" onClick={() => setShowModal(false)}>Close</button>
+  </div>
+</Modal>
+
+
+
     </div>
   );
 }
@@ -226,10 +248,20 @@ function FlashcardForm({ newFlashcard, onInputChange, onSubmit }) {
     </form>
   );
 }
-
 function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggleIndividualAnswers, handleEditFlashcard, handleDeleteFlashcard }) {
   const [showIndividualAnswers, setShowIndividualAnswers] = useState(true);
-  
+  const [editableFlashcard, setEditableFlashcard] = useState(null); // Stato per tenere traccia della flashcard aperta per la modifica
+
+  // Funzione per gestire l'apertura della flashcard per la modifica
+  const openEditFlashcard = (index, flashcard) => {
+    setEditableFlashcard({ index, ...flashcard });
+  };
+
+  // Funzione per gestire la chiusura della modalità di modifica
+  const closeEditFlashcard = () => {
+    setEditableFlashcard(null);
+  };
+
   return (
     <>
       <h2>Flashcards</h2>
@@ -240,24 +272,80 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
         <ul>
           {flashcards.map((flashcard, index) => (
             <li key={index} className="flashcard-item">
-              <strong>Question:</strong> {flashcard.question} <br />
-              {!showAnswers && showIndividualAnswers && (
-                <button
-                  className='btn btn-flesh'
-                  onClick={() => handleToggleIndividualAnswers(flashcard.answer)}
-                >
-                  Show Answer
-                </button>
+              {editableFlashcard && editableFlashcard.index === index ? ( // Se la flashcard è aperta per la modifica, mostra i campi di input
+                <FlashcardEditForm
+                  flashcard={editableFlashcard}
+                  onCancel={closeEditFlashcard}
+                  onSave={(updatedFlashcard) => {
+                    handleEditFlashcard(index, updatedFlashcard);
+                    closeEditFlashcard();
+                  }}
+                />
+              ) : (
+                <> 
+                  <strong>Question:</strong> {flashcard.question} <br />
+                  {!showAnswers && showIndividualAnswers && (
+                    <button
+                      className='btn btn-flesh'
+                      onClick={() => handleToggleIndividualAnswers(flashcard.answer)}
+                    >
+                      Show Answer
+                    </button>
+                  )}
+                  {showAnswers && <><br /><strong>Answer:</strong> {flashcard.answer}</>}
+                  <button className='btnedit' onClick={() => openEditFlashcard(index, flashcard)}>Edit</button>
+                  <button className='btndelete' onClick={() => handleDeleteFlashcard(index)}>Delete</button>
+                </>
               )}
-              {showAnswers && <><br /><strong>Answer:</strong> {flashcard.answer}</>}
-              <button className='btnedit' onClick={() => handleEditFlashcard(index)}>Edit</button>
-              <button className='btndelete' onClick={() => handleDeleteFlashcard(index)}>Delete</button>
             </li>
           ))}
         </ul>
       </div>
     </>
   );
+  function FlashcardEditForm({ flashcard, onCancel, onSave }) {
+    const [updatedFlashcard, setUpdatedFlashcard] = useState(flashcard);
+  
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setUpdatedFlashcard({ ...updatedFlashcard, [name]: value });
+    };
+  
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onSave(updatedFlashcard);
+    };
+  
+    return (
+      <form onSubmit={handleSubmit} className="flashcard-edit-form">
+        <div className="form-group">
+          <label htmlFor="question">Question:</label>
+          <input
+            type="text"
+            id="question"
+            name="question"
+            value={updatedFlashcard.question}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="answer">Answer:</label>
+          <textarea
+            id="answer"
+            name="answer"
+            value={updatedFlashcard.answer}
+            onChange={handleInputChange}
+            required
+            rows="4"
+            style={{ resize: "vertical" }}
+          />
+        </div>
+        <button type="submit" className="btn btn-secondary">Save</button>
+        <button type="button" className="btn btn-secondary" onClick={onCancel}>Cancel</button>
+      </form>
+    );
+  }
 }
 
 export default App;
