@@ -1,0 +1,252 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+ul{
+  list-style-type: none;
+  margin:0;
+  padding:0;
+}
+
+.App {
+  
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.App-header {
+  background-color: #aec6cf; /* Blu pastello */
+  padding: 5px 20px;
+  
+  color: rgb(0, 0, 0);
+}
+
+.App-main {
+  display: flex;
+  flex: 1;
+  padding: 20px;
+}
+
+
+
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px; /* Stesso font-size dell'input */
+  resize: none !important; /* Rende il textarea non ridimensionabile */
+}
+
+.form-group textarea:focus {
+  outline: none;
+  resize: none !important;
+  border-color: #66bb6a; /* Stesso colore di focus dell'input */
+  box-shadow: 0 0 0 2px #cce5ff; /* Stesso effetto di focus dell'input */
+}
+
+.main-content {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 15px;
+  background-color: #c1d6e1; /* Blu pastello più scuro */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-right: 20px;
+  max-height: 80vh; /* Altezza massima */
+  overflow-y: auto; /* Consente lo scorrimento verticale */
+}
+
+hr{
+  width: 400px;
+  border: 0;
+  height: 1px;
+  background: #a7a7a7;
+  background-image: linear-gradient(to right, #ccc, #258fa1, #ccc);
+}
+
+
+.sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 15px;
+  background-color: #c1d6e1; /* Blu pastello più scuro */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 80vh; /* Altezza massima */
+  overflow-y: auto; /* Consente lo scorrimento verticale */
+}
+
+
+.flashcard-form, .folder-form {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.flashcard-list, .folder-list {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.flashcard-list {
+  max-height: 80vh; /* Altezza massima */
+  overflow-y: auto; /* Consente lo scorrimento verticale */
+}
+
+
+.folder-list {
+  max-height: 80vh; /* Altezza massima */
+  overflow-y: auto; /* Consente lo scorrimento verticale */
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.btn {
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #6699cc; /* Blu pastello più scuro */
+}
+
+.btn-primary:hover {
+  background-color: #88a8cc; /* Blu pastello più chiaro */
+}
+
+.btn-secondary {
+  background-color: #6699cc; /* Blu pastello più scuro */
+}
+
+.btn-flesh {
+  background-color: #587ca0; /* Blu pastello più scuro */
+  padding: 10px !important;
+  margin: 10px !important;
+}
+
+/* Aggiungi queste regole CSS al tuo file App.css o a un nuovo file CSS */
+
+.ReactModal__Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo traslucido */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ReactModal__Content {
+  position: absolute;
+  background-color: #fff; /* Sfondo bianco */
+  border-radius: 20px; /* Bordi arrotondati */
+  padding: 20px; /* Spaziatura interna */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombra sottile */
+  max-width: 600px; /* Ridimensiona la larghezza */
+  max-height: 400px; /* Ridimensiona l'altezza */
+}
+
+.Modal__CloseButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+  background-color: #88a8cc; /* Blu pastello più chiaro */
+}
+
+
+
+.btn-secondary:hover {
+  background-color: #88a8cc; /* Blu pastello più chiaro */
+}
+
+.folder-item {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  background: #ffffff;
+  transition: background 0.3s ease;
+}
+
+.folder-item:hover {
+  background: #f0f0f0;
+}
+
+.folder-item.selected {
+  background-color: #88a8cc !important; /* Arancione */
+  color: #fff !important; /* Testo bianco */
+}
+
+
+.flashcard-item {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.btnedit{
+  background-color: rgb(132, 196, 106);
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  color: rgb(255, 255, 255);
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  padding: 10px;
+  margin:10px;
+  width: 120px;
+}
+
+
+
+.btndelete{
+  background-color: rgb(196, 106, 106);
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  color: rgb(255, 255, 255);
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  padding: 10px;
+  margin:10px;
+  width: 120px;
+
+}
