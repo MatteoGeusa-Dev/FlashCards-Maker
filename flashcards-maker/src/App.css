@@ -37,7 +37,7 @@ ul{
 
 .form-group textarea {
   width: 100%;
-  padding: 8px;
+  padding: 20px;
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -53,11 +53,11 @@ ul{
 }
 
 .main-content {
-  flex: 3;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 20px 16px;
   border-radius: 15px;
   background-color: #c1d6e1; /* Blu pastello più scuro */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -76,9 +76,10 @@ hr{
 
 
 .sidebar {
-  flex: 1;
+  flex: 3;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-self: start;
   padding: 20px;
   border-radius: 15px;
   background-color: #c1d6e1; /* Blu pastello più scuro */
@@ -220,6 +221,14 @@ hr{
   margin-bottom: 5px;
   background: #ffffff;
   text-align: left;
+}
+
+.foldersss{
+  display: flex;
+  flex-direction: column;
+  padding-left: 100px;
+  padding-right: 100px;
+  min-width: 300px;
 }
 
 .btnedit{

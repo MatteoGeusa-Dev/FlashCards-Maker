@@ -131,9 +131,8 @@ const handleEditFlashcard = (index, updatedFlashcard) => {
             onSubmit={handleAddFlashcard}
           />
           
-          <hr></hr>
-          <br></br>
-          <br></br>
+       
+        <div className='foldersss'>
           <FolderForm
             newFolder={newFolder}
             onInputChange={handleFolderInputChange}
@@ -145,6 +144,7 @@ const handleEditFlashcard = (index, updatedFlashcard) => {
             selectedFolder={selectedFolder}
           />
         </div>
+        </div>
       </main>
       <Modal
   isOpen={showModal}
@@ -152,7 +152,7 @@ const handleEditFlashcard = (index, updatedFlashcard) => {
   contentLabel="Flashcard Answer"
 >
   <div>
-    <h2>Flashcard Answer</h2>
+    <h2>Risposta Flashcard</h2>
     <textarea
       value={modalContent}
       readOnly
@@ -182,7 +182,7 @@ function FolderForm({ newFolder, onInputChange, onSubmit }) {
   return (
     <form onSubmit={onSubmit} className="folder-form">
       <div className="form-group">
-        <label htmlFor="folderName">Folder Name:</label>
+        <label htmlFor="folderName">Cartella:</label>
         <input
           type="text"
           id="folderName"
@@ -191,7 +191,7 @@ function FolderForm({ newFolder, onInputChange, onSubmit }) {
           required
         />
       </div>
-      <button type="submit" className="btn btn-primary">Add Folder</button>
+      <button type="submit" className="btn btn-primary">Aggiungi Cartella</button>
     </form>
   );
 }
@@ -199,8 +199,9 @@ function FolderForm({ newFolder, onInputChange, onSubmit }) {
 function FolderList({ folders, onSelectFolder, selectedFolder }) {
   return (
     <>
-      <h2>Folders</h2>
+      
       <div className="folder-list">
+      <h2>Lista Cartelle:</h2>
         <ul>
           {folders.map((folder, index) => (
             <li
@@ -221,7 +222,7 @@ function FlashcardForm({ newFlashcard, onInputChange, onSubmit }) {
   return (
     <form onSubmit={onSubmit} className="flashcard-form">
       <div className="form-group">
-        <label htmlFor="question">Question:</label>
+        <label htmlFor="question">Domanda:</label>
         <input
           type="text"
           id="question"
@@ -232,7 +233,7 @@ function FlashcardForm({ newFlashcard, onInputChange, onSubmit }) {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="answer">Answer:</label>
+        <label htmlFor="answer">Risposta:</label>
         <textarea
           id="answer"
           name="answer"
@@ -243,7 +244,7 @@ function FlashcardForm({ newFlashcard, onInputChange, onSubmit }) {
           style={{ resize: "vertical" }}
         />
       </div>
-      <button type="submit" className="btn btn-secondary">Add Flashcard</button>
+      <button type="submit" className="btn btn-secondary">Aggiungi Flashcard</button>
     </form>
   );
 }
@@ -292,8 +293,8 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
                     </button>
                   )}
                   {showAnswers && <><br /><strong>Answer:</strong> {flashcard.answer}</>}
-                  <button className='btnedit' onClick={() => openEditFlashcard(index, flashcard)}>Edit</button>
-                  <button className='btndelete' onClick={() => handleDeleteFlashcard(index)}>Delete</button>
+                  <button className='btnedit' onClick={() => openEditFlashcard(index, flashcard)}>Modifica</button>
+                  <button className='btndelete' onClick={() => handleDeleteFlashcard(index)}>Cancella</button>
                 </>
               )}
             </li>
@@ -318,7 +319,7 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
     return (
       <form onSubmit={handleSubmit} className="flashcard-edit-form">
         <div className="form-group">
-          <label htmlFor="question">Question:</label>
+          <label htmlFor="question">Domanda:</label>
           <input
             type="text"
             id="question"
@@ -329,7 +330,7 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
           />
         </div>
         <div className="form-group">
-          <label htmlFor="answer">Answer:</label>
+          <label htmlFor="answer">Risposta:</label>
           <textarea
             id="answer"
             name="answer"
@@ -340,8 +341,8 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
             style={{ resize: "vertical" }}
           />
         </div>
-        <button type="submit" className="btn btn-secondary">Save</button>
-        <button type="button" className="btn btn-secondary" onClick={onCancel}>Cancel</button>
+        <button type="submit" className="btn btn-secondary">Salva</button>
+        <button type="button" className="btn btn-secondary" onClick={onCancel}>Cancella</button>
       </form>
     );
   }
