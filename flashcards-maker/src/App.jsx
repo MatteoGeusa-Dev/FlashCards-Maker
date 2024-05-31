@@ -111,10 +111,16 @@ function App() {
       return folder;
     });
     setFolders(updatedFolders);
+    clearImageInput();
     setNewFlashcard({ question: '', answer: '', image: null, status: 0 });
     setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
   };
-  
+
+  const clearImageInput = () => {
+    const imageInput = document.getElementById('image');
+    if (imageInput) {
+      imageInput.value = ""; // Resetta il campo di input dell'immagine
+    }};
 
   const [currentCategory, setCurrentCategory] = useState(null);
 
