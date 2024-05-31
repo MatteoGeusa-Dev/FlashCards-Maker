@@ -147,7 +147,7 @@ function App() {
 
   const handleDeleteFolder = (folderName) => {
     const confirmation = window.confirm(`Sei sicuro di voler eliminare la cartella "${folderName}" e tutte le sue flashcard?`);
-    if (confirmation) {
+    if (confirmation && selectedFolder.name != 'Non categorizzate') {
       const updatedFolders = folders.filter(folder => folder.name !== folderName);
       setFolders(updatedFolders);
       if (selectedFolder && selectedFolder.name === folderName) {
@@ -352,7 +352,7 @@ function FlashcardList({
           <h3>
             Domande da studiare{' '}
             <button className='buttontransparent' onClick={() => setStudyCollapsed(!studyCollapsed)}>
-              {studyCollapsed ? '⬇️' : '⬆️'}
+              {studyCollapsed ? '⬇️ (Espandi)' : '⬆️ (Chiudi)'}
             </button>
           </h3>
           {!studyCollapsed && renderFlashcards(studyFlashcards)}
@@ -361,7 +361,7 @@ function FlashcardList({
           <h3>
             Domande da ripetere{' '}
             <button className='buttontransparent' onClick={() => setReviewCollapsed(!reviewCollapsed)}>
-              {reviewCollapsed ? '⬇️' : '⬆️'}
+              {reviewCollapsed ? '⬇️ (Espandi)' : '⬆️ (Chiudi)'}
             </button>
           </h3>
           {!reviewCollapsed && renderFlashcards(reviewFlashcards)}
@@ -370,7 +370,7 @@ function FlashcardList({
           <h3>
             Domande fatte{' '}
             <button className='buttontransparent' onClick={() => setDoneCollapsed(!doneCollapsed)}>
-              {doneCollapsed ? '⬇️' : '⬆️'}
+              {doneCollapsed ? '⬇️ (Espandi)' : '⬆️ (Chiudi)'}
             </button>
           </h3>
           {!doneCollapsed && renderFlashcards(doneFlashcards)}
@@ -381,8 +381,11 @@ function FlashcardList({
 
   function renderFlashcards(flashcards) {
     return flashcards.length === 0 ? (
+      <div className='container_list'>
       <p>Nessuna flashcard presente.</p>
+      </div>
     ) : (
+      <div className='container_list'>
       <ul>
         {flashcards.map((flashcard, index) => (
           <li key={index} className="flashcard-item">
@@ -428,6 +431,7 @@ function FlashcardList({
           </li>
         ))}
       </ul>
+      </div>
     );
   }
 
