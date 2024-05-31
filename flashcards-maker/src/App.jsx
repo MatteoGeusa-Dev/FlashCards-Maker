@@ -12,7 +12,7 @@ function App() {
     const savedSelectedFolder = localStorage.getItem('selectedFolder');
     return savedSelectedFolder ? JSON.parse(savedSelectedFolder) : folders.find(folder => folder.name === 'Non categorizzate');
   });
-  const [newFlashcard, setNewFlashcard] = useState({ question: '', answer: '' ,status:0});
+  const [newFlashcard, setNewFlashcard] = useState({ question: '', answer: '', image: '', status: 0 });
   const [showAnswers, setShowAnswers] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState('');
@@ -71,9 +71,21 @@ function App() {
   };
 
   const handleFlashcardInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewFlashcard({ ...newFlashcard, [name]: value });
+    const { name, value, files } = e.target;
+    if (name === 'image' && files && files[0]) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewFlashcard({ ...newFlashcard, image: reader.result });
+      };
+      reader.readAsDataURL(files[0]);
+    } else {
+      setNewFlashcard({ ...newFlashcard, [name]: value });
+    }
   };
+  
+  
+  
+  
 
   const handleAddFolder = (e) => {
     e.preventDefault();
@@ -91,6 +103,7 @@ function App() {
           flashcards: [...folder.flashcards, {
             question: newFlashcard.question,
             answer: newFlashcard.answer.replace(/\n/g, '\n'),
+            image:newFlashcard.image,
             status: 0 // Set status to 0 for new flashcards
           }],
         };
@@ -98,11 +111,13 @@ function App() {
       return folder;
     });
     setFolders(updatedFolders);
-    setNewFlashcard({ question: '', answer: '' ,status:0});
+    setNewFlashcard({ question: '', answer: '', image: null, status: 0 });
     setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
   };
+  
 
   const [currentCategory, setCurrentCategory] = useState(null);
+
 
   const handleEditFlashcard = (index, updatedFlashcard) => {
     const { question, answer, category } = updatedFlashcard;
@@ -205,19 +220,26 @@ function App() {
           </div>
         </div>
       </main>
-      <Modal className='modalsize'
+      <Modal
+        className='modalsize'
         isOpen={showModal}
         onRequestClose={() => setShowModal(false)}
         contentLabel="Flashcard Answer"
       >
         <div>
           <h2>Risposta Flashcard</h2>
-          <textarea className="modaltextarea"
+          <textarea
+            className="modaltextarea"
             value={modalContent}
             readOnly
             rows={10}
             wrap="soft"
           />
+          {currentFlashcardIndex !== null && selectedFolder.flashcards[currentFlashcardIndex].image && (
+            <div className="image-preview">
+              <img src={selectedFolder.flashcards[currentFlashcardIndex].image} alt="Flashcard Image" />
+            </div>
+          )}
           <div className='centered'>
             <button className="Modal__CloseButton" onClick={() => setShowModal(false)}>Chiudi</button>
             <button className="Modal__knowButton" onClick={handlePassed}>👍</button>
@@ -225,6 +247,7 @@ function App() {
           </div>
         </div>
       </Modal>
+
     </div>
   );
 }
@@ -308,15 +331,32 @@ function FlashcardForm({ newFlashcard, onInputChange, onSubmit }) {
           style={{ resize: "vertical" }}
         />
       </div>
+      <div className="form-group">
+        <label htmlFor="image">Immagine:</label>
+        <input
+          type="file"
+          id="image"
+          name="image"
+          accept="image/*"
+          onChange={onInputChange}
+        />
+
+        {newFlashcard.image && (
+          <div className="image-preview">
+            <img src={newFlashcard.image} alt="Preview" />
+          </div>
+        )}
+      </div>
       <button type="submit" className="btn btn-secondary">Aggiungi Flashcard</button>
     </form>
   );
 }
 
+
+
 function FlashcardList({
   flashcards,
   showAnswers,
-  toggleShowAnswers,
   handleToggleIndividualAnswers,
   handleEditFlashcard,
   handleDeleteFlashcard,

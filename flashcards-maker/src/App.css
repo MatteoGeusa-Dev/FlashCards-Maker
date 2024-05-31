@@ -145,6 +145,7 @@ hr {
 }
 
 .ReactModal__Overlay {
+  overflow: auto; /* Aggiunto overflow: auto per consentire lo scrolling del contenuto del modal */
   position: fixed;
   top: 0;
   left: 0;
@@ -158,15 +159,16 @@ hr {
 }
 
 .ReactModal__Content {
-
   border: 0 !important;
-  position: absolute;
-  background-color: #2c2c2c!important; /* Dark background for modal */
+  position: relative; /* Cambiato da absolute a relative */
+  background-color: #2c2c2c !important; /* Dark background for modal */
   border-radius: 20px;
   padding: 20px;
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)!important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   color: #ffffff; /* Light text color */
+  max-width: 90%; /* Aggiunto per rendere il modal responsive */
+  max-height: 90%; /* Aggiunto per rendere il modal responsive */
+  overflow-y: auto; /* Aggiunto per consentire lo scrolling del contenuto del modal */
 }
 
 .Modal__CloseButton {
@@ -270,7 +272,6 @@ hr {
 
 .modalsize{
   min-width: 800px;
-  max-height: 600px;
 }
 
 .modaltextarea {
@@ -296,6 +297,20 @@ hr {
   flex-direction: column;
   padding: 10px;
 }
+
+.image-preview {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.image-preview img {
+  max-width: 80%;
+  justify-content: center;
+  height: auto;
+}
+
 
 
 .Modal__knowButton{
