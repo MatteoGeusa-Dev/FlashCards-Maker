@@ -126,15 +126,14 @@ function App() {
 
 
   const handleEditFlashcard = (index, updatedFlashcard) => {
-    const { question, answer, category } = updatedFlashcard;
+    const { question, answer, image } = updatedFlashcard;
     const targetFolderName = selectedFolder ? selectedFolder.name : 'Non categorizzate';
-    
-    // Modifica la flashcard nell'array delle flashcards del folder corrente
+  
     const updatedFolders = folders.map((folder) => {
       if (folder.name === targetFolderName) {
         const updatedFlashcards = folder.flashcards.map((flashcard, i) => {
           if (i === index) {
-            return { ...flashcard, question, answer, category };
+            return { ...flashcard, question, answer, image };
           }
           return flashcard;
         });
@@ -142,15 +141,14 @@ function App() {
       }
       return folder;
     });
-    
-    // Aggiorna lo stato con i nuovi folders
+  
     setFolders(updatedFolders);
   
-    // Se la flashcard modificata appartiene al folder attualmente selezionato, aggiorna lo stato del folder selezionato
     if (selectedFolder && selectedFolder.name === targetFolderName) {
       setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
     }
   };
+  
   
 
   const handleDeleteFlashcard = (index) => {
@@ -483,17 +481,33 @@ function FlashcardList({
 
   function FlashcardEditForm({ flashcard, onCancel, onSave }) {
     const [updatedFlashcard, setUpdatedFlashcard] = useState(flashcard);
-
+  
     const handleInputChange = (e) => {
       const { name, value } = e.target;
       setUpdatedFlashcard({ ...updatedFlashcard, [name]: value });
     };
-
+  
+    const handleImageChange = (e) => {
+      const { files } = e.target;
+      if (files && files[0]) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setUpdatedFlashcard({ ...updatedFlashcard, image: reader.result });
+        };
+        reader.readAsDataURL(files[0]);
+      }
+    };
+  
     const handleSubmit = (e) => {
       e.preventDefault();
       onSave(updatedFlashcard);
     };
 
+    const handleRemoveImage = () => {
+      setUpdatedFlashcard({ ...updatedFlashcard, image: '' }); // Rimuove l'immagine
+      onRemoveImage(); // Notifica il componente padre della rimozione dell'immagine
+    };
+  
     return (
       <form onSubmit={handleSubmit} className="flashcard-edit-form">
         <div className="form-group">
@@ -519,8 +533,26 @@ function FlashcardList({
             style={{ resize: 'vertical' }}
           />
         </div>
+        <div className="form-group">
+          <label htmlFor="image">Immagine:</label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            onChange={(e) => handleImageChange(e)}
+          />
+          {updatedFlashcard.image && (
+            <div className="image-preview">
+              <img src={updatedFlashcard.image} alt="Preview" />
+            </div>
+          )}
+        </div>
         <button type="submit" className="btn btn-secondary">
           Salva
+        </button>
+        <button type="button" className="btn btn-delete" onClick={handleRemoveImage}>
+          Rimuovi Immagine
         </button>
         <button type="button" className="btn btn-secondary" onClick={onCancel}>
           Cancella
@@ -528,7 +560,8 @@ function FlashcardList({
       </form>
     );
   }
-}
+}  
+  
 
 
 export default App;

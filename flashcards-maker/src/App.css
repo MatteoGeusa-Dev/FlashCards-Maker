@@ -359,8 +359,8 @@ hr {
 }
 
 .btn-delete{
-  background-color: rgb(136, 47, 47);
-  color: white;
+  background-color: rgb(136, 47, 47) !important;
+  color: white !important;
 }
 
 .inputnamefolder{
