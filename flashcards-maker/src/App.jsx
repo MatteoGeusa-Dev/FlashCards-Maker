@@ -12,10 +12,44 @@ function App() {
     const savedSelectedFolder = localStorage.getItem('selectedFolder');
     return savedSelectedFolder ? JSON.parse(savedSelectedFolder) : folders.find(folder => folder.name === 'Non categorizzate');
   });
-  const [newFlashcard, setNewFlashcard] = useState({ question: '', answer: '' });
+  const [newFlashcard, setNewFlashcard] = useState({ question: '', answer: '' ,status:0});
   const [showAnswers, setShowAnswers] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(null);
+
+  const handlePassed = () => {
+    if (currentFlashcardIndex !== null) {
+      updateFlashcardStatus(currentFlashcardIndex, 2);
+    }
+  };
+
+  const handletoRepet = () => {
+    if (currentFlashcardIndex !== null) {
+      updateFlashcardStatus(currentFlashcardIndex, 1);
+    }
+  };
+
+  const updateFlashcardStatus = (index, newStatus) => {
+    const targetFolderName = selectedFolder ? selectedFolder.name : 'Non categorizzate';
+    const updatedFolders = folders.map((folder) => {
+      if (folder.name === targetFolderName) {
+        return {
+          ...folder,
+          flashcards: folder.flashcards.map((flashcard, i) => {
+            if (i === index) {
+              return { ...flashcard, status: newStatus };
+            }
+            return flashcard;
+          }),
+        };
+      }
+      return folder;
+    });
+    setFolders(updatedFolders);
+    setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
+    setShowModal(false); // Close the modal after updating the status
+  };
 
   useEffect(() => {
     localStorage.setItem('folders', JSON.stringify(folders));
@@ -29,6 +63,11 @@ function App() {
 
   const handleFolderInputChange = (e) => {
     setNewFolder(e.target.value);
+  };
+
+  const handleFolderSelection = (folder) => {
+    setCurrentCategory(folder.name); // Imposta la nuova categoria selezionata
+    setSelectedFolder(folder); // Imposta la cartella selezionata
   };
 
   const handleFlashcardInputChange = (e) => {
@@ -51,38 +90,57 @@ function App() {
           ...folder,
           flashcards: [...folder.flashcards, {
             question: newFlashcard.question,
-            answer: newFlashcard.answer.replace(/\n/g, '\n')
+            answer: newFlashcard.answer.replace(/\n/g, '\n'),
+            status: 0 // Set status to 0 for new flashcards
           }],
         };
       }
       return folder;
     });
     setFolders(updatedFolders);
-    setNewFlashcard({ question: '', answer: '' });
+    setNewFlashcard({ question: '', answer: '' ,status:0});
     setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
   };
-  
 
-const handleEditFlashcard = (index, updatedFlashcard) => {
-  const { question, answer } = updatedFlashcard;
-  const targetFolderName = selectedFolder ? selectedFolder.name : 'Non categorizzate';
-  const updatedFolders = folders.map((folder) => {
-    const updatedFlashcards = folder.flashcards.map((flashcard, i) => {
-      if (i === index) {
-        return { ...flashcard, question, answer };
+  const [currentCategory, setCurrentCategory] = useState(null);
+
+  const handleEditFlashcard = (index, updatedFlashcard) => {
+    const { question, answer, category } = updatedFlashcard; // Aggiungiamo la categoria alla flashcard
+    const originalCategory = flashcards[index].category; // Otteniamo la categoria originale della flashcard
+    
+    // Se la categoria è cambiata, spostiamo la flashcard dalla categoria originale alla categoria selezionata
+    if (originalCategory !== currentCategory) {
+      const updatedFolders = folders.map((folder) => {
+        if (folder.name === originalCategory) {
+          const updatedFlashcards = folder.flashcards.filter((flashcard, i) => i !== index);
+          return { ...folder, flashcards: updatedFlashcards };
+        }
+        if (folder.name === currentCategory) {
+          return { ...folder, flashcards: [...folder.flashcards, { question, answer, category }] };
+        }
+        return folder;
+      });
+      setFolders(updatedFolders);
+    }
+  
+    // Aggiorniamo la flashcard nel folder corrente con le modifiche
+    const updatedFolders = folders.map((folder) => {
+      if (folder.name === currentCategory || folder.name === originalCategory) {
+        const updatedFlashcards = folder.flashcards.map((flashcard, i) => {
+          if (i === index) {
+            return { ...flashcard, question, answer, category };
+          }
+          return flashcard;
+        });
+        return { ...folder, flashcards: updatedFlashcards };
       }
-      return flashcard;
+      return folder;
     });
-    return { ...folder, flashcards: updatedFlashcards };
-  });
-  setFolders(updatedFolders);
-  setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
-};
+  
+    setFolders(updatedFolders);
+    setCurrentCategory(null); // Resettiamo la categoria corrente
+  };
 
-  
-  
-  
-  
   const handleDeleteFlashcard = (index) => {
     const confirmation = window.confirm("Sei sicuro di voler eliminare questa Fleshcard?");
     if (confirmation) {
@@ -91,8 +149,19 @@ const handleEditFlashcard = (index, updatedFlashcard) => {
         const updatedFlashcards = folder.flashcards.filter((flashcard, i) => i !== index);
         return { ...folder, flashcards: updatedFlashcards };
       });
-      setFolders(updatedFolders); 
+      setFolders(updatedFolders);
       setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
+    }
+  };
+
+  const handleDeleteFolder = (folderName) => {
+    const confirmation = window.confirm(`Sei sicuro di voler eliminare la cartella "${folderName}" e tutte le sue flashcard?`);
+    if (confirmation) {
+      const updatedFolders = folders.filter(folder => folder.name !== folderName);
+      setFolders(updatedFolders);
+      if (selectedFolder && selectedFolder.name === folderName) {
+        setSelectedFolder(updatedFolders.find(folder => folder.name === 'Non categorizzate') || null);
+      }
     }
   };
 
@@ -102,8 +171,9 @@ const handleEditFlashcard = (index, updatedFlashcard) => {
     setShowAnswers(!showAnswers);
   };
 
-  const handleToggleIndividualAnswers = (content) => {
+  const handleToggleIndividualAnswers = (content, index) => {
     setModalContent(content);
+    setCurrentFlashcardIndex(index);
     setShowModal(true);
   };
 
@@ -114,7 +184,6 @@ const handleEditFlashcard = (index, updatedFlashcard) => {
       </header>
       <main className="App-main">
         <div className="main-content">
-          
           <FlashcardList
             flashcards={currentFolder.flashcards}
             showAnswers={showAnswers}
@@ -130,50 +199,41 @@ const handleEditFlashcard = (index, updatedFlashcard) => {
             onInputChange={handleFlashcardInputChange}
             onSubmit={handleAddFlashcard}
           />
-          
-       
-        <div className='foldersss'>
-          <FolderForm
-            newFolder={newFolder}
-            onInputChange={handleFolderInputChange}
-            onSubmit={handleAddFolder}
-          />
-          <FolderList
-            folders={folders}
-            onSelectFolder={setSelectedFolder}
-            selectedFolder={selectedFolder}
-          />
-        </div>
+          <div className='foldersss'>
+            <FolderForm
+              newFolder={newFolder}
+              onInputChange={handleFolderInputChange}
+              onSubmit={handleAddFolder}
+            />
+            <FolderList
+              folders={folders}
+              onSelectFolder={handleFolderSelection}
+              onDeleteFolder={handleDeleteFolder}
+              selectedFolder={selectedFolder}
+            />
+          </div>
         </div>
       </main>
-      <Modal
-  isOpen={showModal}
-  onRequestClose={() => setShowModal(false)}
-  contentLabel="Flashcard Answer"
->
-  <div>
-    <h2>Risposta Flashcard</h2>
-    <textarea
-      value={modalContent}
-      readOnly
-      rows={10} // Imposta il numero di righe desiderato
-      wrap="soft" // Imposta il wrapping del testo su "soft"
-      style={{ 
-        width: '100%', // Imposta la larghezza della textarea al 100% del contenitore
-        resize: 'none', // Rendi la textarea non ridimensionabile
-        fontSize: '16px', // Imposta il carattere a 16px
-        height:"650px",
-        fontFamily: 'Arial, sans-serif', // Imposta il tipo di carattere
-        lineHeight: '1.6', // Imposta l'altezza della riga per una migliore leggibilità
-        padding: '10px', // Aggiungi spaziatura intorno al testo
-        boxSizing: 'border-box', // Include il padding nella larghezza totale della textarea
-      }} 
-    />
-    <button className="Modal__CloseButton" onClick={() => setShowModal(false)}>Close</button>
-  </div>
-</Modal>
-
-
+      <Modal className='modalsize'
+        isOpen={showModal}
+        onRequestClose={() => setShowModal(false)}
+        contentLabel="Flashcard Answer"
+      >
+        <div>
+          <h2>Risposta Flashcard</h2>
+          <textarea className="modaltextarea"
+            value={modalContent}
+            readOnly
+            rows={10}
+            wrap="soft"
+          />
+          <div className='centered'>
+            <button className="Modal__CloseButton" onClick={() => setShowModal(false)}>Chiudi</button>
+            <button className="Modal__knowButton" onClick={handlePassed}>👍</button>
+            <button className="Modal__dontknowButton" onClick={handletoRepet}>❌</button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -182,12 +242,13 @@ function FolderForm({ newFolder, onInputChange, onSubmit }) {
   return (
     <form onSubmit={onSubmit} className="folder-form">
       <div className="form-group">
-        <label htmlFor="folderName">Cartella:</label>
+        <label htmlFor="folderName">Crea nuova cartella:</label>
         <input
           type="text"
           id="folderName"
           value={newFolder}
           onChange={onInputChange}
+          autoComplete='off'
           required
         />
       </div>
@@ -196,21 +257,30 @@ function FolderForm({ newFolder, onInputChange, onSubmit }) {
   );
 }
 
-function FolderList({ folders, onSelectFolder, selectedFolder }) {
+function FolderList({ folders, onSelectFolder, selectedFolder, onDeleteFolder }) {
   return (
     <>
-      
       <div className="folder-list">
-      <h2>Lista Cartelle:</h2>
+        <h2>Le tue cartelle:</h2>
         <ul>
           {folders.map((folder, index) => (
-            <li
-              key={index}
-              onClick={() => onSelectFolder(folder)}
-              className={`folder-item ${selectedFolder && selectedFolder.name === folder.name ? 'selected' : ''}`}
-            >
-              {folder.name}
-            </li>
+            <div className='listfolder' key={index}>
+              <li
+                onClick={() => onSelectFolder(folder)}
+                className={`folder-item ${selectedFolder && selectedFolder.name === folder.name ? 'selected' : ''}`}
+              >
+                <div className='verticalcenter'>{folder.name}</div>
+                <button
+                  className='btn btn-delete'
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevents the onClick event of the list item from being triggered
+                    onDeleteFolder(folder.name);
+                  }}
+                >
+                  Elimina
+                </button>
+              </li>
+            </div>
           ))}
         </ul>
       </div>
@@ -229,6 +299,7 @@ function FlashcardForm({ newFlashcard, onInputChange, onSubmit }) {
           name="question"
           value={newFlashcard.question}
           onChange={onInputChange}
+          autoComplete='off'
           required
         />
       </div>
@@ -239,6 +310,7 @@ function FlashcardForm({ newFlashcard, onInputChange, onSubmit }) {
           name="answer"
           value={newFlashcard.answer}
           onChange={onInputChange}
+          autoComplete='off'
           required
           rows="4"
           style={{ resize: "vertical" }}
@@ -248,61 +320,88 @@ function FlashcardForm({ newFlashcard, onInputChange, onSubmit }) {
     </form>
   );
 }
+
 function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggleIndividualAnswers, handleEditFlashcard, handleDeleteFlashcard }) {
   const [showIndividualAnswers, setShowIndividualAnswers] = useState(true);
-  const [editableFlashcard, setEditableFlashcard] = useState(null); // Stato per tenere traccia della flashcard aperta per la modifica
+  const [editableFlashcard, setEditableFlashcard] = useState(null); // State for tracking the flashcard open for editing
 
-  // Funzione per gestire l'apertura della flashcard per la modifica
+  // Function to handle opening the flashcard for editing
   const openEditFlashcard = (index, flashcard) => {
     setEditableFlashcard({ index, ...flashcard });
   };
 
-  // Funzione per gestire la chiusura della modalità di modifica
+  // Function to handle closing the edit mode
   const closeEditFlashcard = () => {
     setEditableFlashcard(null);
   };
 
+  // Separate flashcards based on their status
+  const studyFlashcards = flashcards.filter(flashcard => flashcard.status === 0);
+  const reviewFlashcards = flashcards.filter(flashcard => flashcard.status === 1);
+  const doneFlashcards = flashcards.filter(flashcard => flashcard.status === 2);
+
   return (
     <>
       <h2>Flashcards</h2>
-      <button className='btn btn-primary' onClick={toggleShowAnswers}>
-        {showAnswers ? "Hide Answers" : "Show Answers"}
-      </button>
       <div className="flashcard-list">
-        <ul>
-          {flashcards.map((flashcard, index) => (
-            <li key={index} className="flashcard-item">
-              {editableFlashcard && editableFlashcard.index === index ? ( // Se la flashcard è aperta per la modifica, mostra i campi di input
-                <FlashcardEditForm
-                  flashcard={editableFlashcard}
-                  onCancel={closeEditFlashcard}
-                  onSave={(updatedFlashcard) => {
-                    handleEditFlashcard(index, updatedFlashcard);
-                    closeEditFlashcard();
-                  }}
-                />
-              ) : (
-                <> 
-                  <strong>Question:</strong> {flashcard.question} <br />
-                  {!showAnswers && showIndividualAnswers && (
-                    <button
-                      className='btn btn-flesh'
-                      onClick={() => handleToggleIndividualAnswers(flashcard.answer)}
-                    >
-                      Show Answer
-                    </button>
-                  )}
-                  {showAnswers && <><br /><strong>Answer:</strong> {flashcard.answer}</>}
-                  <button className='btnedit' onClick={() => openEditFlashcard(index, flashcard)}>Modifica</button>
-                  <button className='btndelete' onClick={() => handleDeleteFlashcard(index)}>Cancella</button>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
+        <div className="flashcard-section">
+          <h3>Domande da studiare</h3>
+          {renderFlashcards(studyFlashcards)}
+        </div>
+        <div className="flashcard-section">
+          <h3>Domande da ripetere</h3>
+          {renderFlashcards(reviewFlashcards)}
+        </div>
+        <div className="flashcard-section">
+          <h3>Domande fatte</h3>
+          {renderFlashcards(doneFlashcards)}
+        </div>
       </div>
     </>
   );
+
+  function renderFlashcards(flashcards) {
+    return flashcards.length === 0 ? (
+      <p>Nessuna flashcard presente.</p>
+    ) : (
+      <ul>
+        {flashcards.map((flashcard, index) => (
+          <li key={index} className="flashcard-item">
+            {editableFlashcard && editableFlashcard.index === index ? ( // If the flashcard is open for editing, show the input fields
+              <FlashcardEditForm
+                flashcard={editableFlashcard}
+                onCancel={closeEditFlashcard}
+                onSave={(updatedFlashcard) => {
+                  handleEditFlashcard(index, updatedFlashcard);
+                  closeEditFlashcard();
+                }}
+              />
+            ) : (
+              <>
+                <div className='centeredfleshcard'>
+                  <strong>Domanda:</strong> {flashcard.question} <br />
+                  <div className='centered'>
+                    {!showAnswers && showIndividualAnswers && (
+                      <button
+                        className='btn btn-flesh'
+                        onClick={() => handleToggleIndividualAnswers(flashcard.answer, index)}
+                      >
+                        Mostra Risposta
+                      </button>
+                    )}
+                    {showAnswers && <><br /><strong>Risposta:</strong> {flashcard.answer}</>}
+                    <button className='btnedit' onClick={() => openEditFlashcard(index, flashcard)}>Modifica</button>
+                    <button className='btndelete' onClick={() => handleDeleteFlashcard(index)}>Cancella</button>
+                  </div>
+                </div>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
   function FlashcardEditForm({ flashcard, onCancel, onSave }) {
     const [updatedFlashcard, setUpdatedFlashcard] = useState(flashcard);
   
@@ -315,7 +414,7 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
       e.preventDefault();
       onSave(updatedFlashcard);
     };
-  
+
     return (
       <form onSubmit={handleSubmit} className="flashcard-edit-form">
         <div className="form-group">
@@ -349,4 +448,3 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
 }
 
 export default App;
-

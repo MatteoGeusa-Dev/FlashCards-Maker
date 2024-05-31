@@ -1,18 +1,18 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
+  background-color: #121212; /* Dark background */
+  margin: 0;
+  padding: 0;
+  color: #e0e0e0; /* Light text color */
+}
+
+ul {
+  list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-ul{
-  list-style-type: none;
-  margin:0;
-  padding:0;
-}
-
 .App {
-  
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -21,10 +21,9 @@ ul{
 }
 
 .App-header {
-  background-color: #aec6cf; /* Blu pastello */
+  background-color: #1f1f1f; /* Darker background for header */
   padding: 5px 20px;
-  
-  color: rgb(0, 0, 0);
+  color: #e0e0e0; /* Light text color */
 }
 
 .App-main {
@@ -33,24 +32,19 @@ ul{
   padding: 20px;
 }
 
-
-
 .form-group textarea {
   width: 100%;
   padding: 20px;
+  height: 400px;
   box-sizing: border-box;
-  border: 1px solid #ccc;
+  border: 1px solid #444; /* Dark border */
   border-radius: 8px;
-  font-size: 16px; /* Stesso font-size dell'input */
-  resize: none !important; /* Rende il textarea non ridimensionabile */
+  font-size: 16px;
+  background-color: #333; /* Dark background for textarea */
+  color: #e0e0e0; /* Light text color */
+  resize: none !important;
 }
 
-.form-group textarea:focus {
-  outline: none;
-  resize: none !important;
-  border-color: #66bb6a; /* Stesso colore di focus dell'input */
-  box-shadow: 0 0 0 2px #cce5ff; /* Stesso effetto di focus dell'input */
-}
 
 .main-content {
   flex: 1;
@@ -59,21 +53,20 @@ ul{
   align-items: center;
   padding: 20px 16px;
   border-radius: 15px;
-  background-color: #c1d6e1; /* Blu pastello più scuro */
+  background-color: #1e1e1e; /* Dark background for main content */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-right: 20px;
-  max-height: 80vh; /* Altezza massima */
-  overflow-y: auto; /* Consente lo scorrimento verticale */
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
-hr{
+hr {
   width: 400px;
   border: 0;
   height: 1px;
-  background: #a7a7a7;
-  background-image: linear-gradient(to right, #ccc, #258fa1, #ccc);
+  background: #444; /* Dark gradient */
+  background-image: linear-gradient(to right, #444, #666, #444);
 }
-
 
 .sidebar {
   flex: 3;
@@ -82,12 +75,11 @@ hr{
   justify-self: start;
   padding: 20px;
   border-radius: 15px;
-  background-color: #c1d6e1; /* Blu pastello più scuro */
+  background-color: #1e1e1e; /* Dark background for sidebar */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-height: 80vh; /* Altezza massima */
-  overflow-y: auto; /* Consente lo scorrimento verticale */
+  max-height: 80vh;
+  overflow-y: auto;
 }
-
 
 .flashcard-form, .folder-form {
   margin-bottom: 20px;
@@ -99,15 +91,9 @@ hr{
   width: 100%;
 }
 
-.flashcard-list {
-  max-height: 80vh; /* Altezza massima */
-  overflow-y: auto; /* Consente lo scorrimento verticale */
-}
-
-
-.folder-list {
-  max-height: 80vh; /* Altezza massima */
-  overflow-y: auto; /* Consente lo scorrimento verticale */
+.flashcard-list, .folder-list {
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .form-group {
@@ -124,12 +110,15 @@ hr{
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
-  border: 1px solid #ccc;
+  border: 1px solid #444; /* Dark border */
   border-radius: 8px;
+  background-color: #333; /* Dark background for input */
+  color: #e0e0e0; /* Light text color */
 }
 
 .btn {
   padding: 10px 15px;
+  margin: 5px;
   cursor: pointer;
   border: none;
   color: white;
@@ -138,24 +127,22 @@ hr{
 }
 
 .btn-primary {
-  background-color: #6699cc; /* Blu pastello più scuro */
+  background-color: #6699cc;
 }
 
 .btn-primary:hover {
-  background-color: #88a8cc; /* Blu pastello più chiaro */
+  background-color: #88a8cc;
 }
 
 .btn-secondary {
-  background-color: #6699cc; /* Blu pastello più scuro */
+  background-color: #6699cc;
 }
 
 .btn-flesh {
-  background-color: #587ca0; /* Blu pastello più scuro */
+  background-color: #587ca0;
   padding: 10px !important;
   margin: 10px !important;
 }
-
-/* Aggiungi queste regole CSS al tuo file App.css o a un nuovo file CSS */
 
 .ReactModal__Overlay {
   position: fixed;
@@ -163,21 +150,28 @@ hr{
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Fondo traslucido */
+  border: 0 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important; /* Dark translucent background */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .ReactModal__Content {
+
+  border: 0 !important;
   position: absolute;
-  background-color: #fff; /* Sfondo bianco */
-  border-radius: 20px; /* Bordi arrotondati */
-  padding: 20px; /* Spaziatura interna */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombra sottile */
+  background-color: #2c2c2c!important; /* Dark background for modal */
+  border-radius: 20px;
+  padding: 20px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)!important;
+  color: #ffffff; /* Light text color */
 }
 
 .Modal__CloseButton {
+  margin-left:10px;
+  margin-right:10px;
   padding: 10px 15px;
   cursor: pointer;
   font-size: large;
@@ -185,45 +179,48 @@ hr{
   color: white;
   border-radius: 8px;
   transition: background 0.3s ease;
-  background-color: #88a8cc; /* Blu pastello più chiaro */
+  background-color: #88a8cc;
 }
 
-
-
 .btn-secondary:hover {
-  background-color: #88a8cc; /* Blu pastello più chiaro */
+  background-color: #88a8cc;
 }
 
 .folder-item {
   cursor: pointer;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #444; /* Dark border */
   border-radius: 8px;
   margin-bottom: 5px;
-  background: #ffffff;
+  background: #333; /* Dark background for folder items */
   transition: background 0.3s ease;
+  color: #e0e0e0; /* Light text color */
+  min-width: 250px;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
 }
 
 .folder-item:hover {
-  background: #f0f0f0;
+  background: #555; /* Slightly lighter background on hover */
 }
 
 .folder-item.selected {
-  background-color: #88a8cc !important; /* Arancione */
-  color: #fff !important; /* Testo bianco */
+  background-color: #88a8cc !important; /* Highlight color */
+  color: #fff !important; /* White text color */
 }
-
 
 .flashcard-item {
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #444; /* Dark border */
   border-radius: 8px;
   margin-bottom: 5px;
-  background: #ffffff;
+  background: #333; /* Dark background for flashcard items */
   text-align: left;
+  color: #e0e0e0; /* Light text color */
 }
 
-.foldersss{
+.foldersss {
   display: flex;
   flex-direction: column;
   padding-left: 100px;
@@ -231,7 +228,7 @@ hr{
   min-width: 300px;
 }
 
-.btnedit{
+.btnedit {
   background-color: rgb(132, 196, 106);
   padding: 10px 15px;
   cursor: pointer;
@@ -240,13 +237,11 @@ hr{
   border-radius: 8px;
   transition: background 0.3s ease;
   padding: 10px;
-  margin:10px;
+  margin: 10px;
   width: 120px;
 }
 
-
-
-.btndelete{
+.btndelete {
   background-color: rgb(196, 106, 106);
   padding: 10px 15px;
   cursor: pointer;
@@ -255,7 +250,71 @@ hr{
   border-radius: 8px;
   transition: background 0.3s ease;
   padding: 10px;
-  margin:10px;
+  margin: 10px;
   width: 120px;
+}
 
+.centered {
+  display: flex;
+  justify-content: center;
+}
+
+.centeredfleshcard {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.modalsize{
+  min-width: 800px;
+  max-height: 600px;
+}
+
+.modaltextarea {
+  max-height: 400px; /* Corrected property name and removed quotes */
+  width: 100%;
+  resize: none;
+  font-size: 16px;
+  height: 650px;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: #333; /* Dark background for textarea */
+  color: #e0e0e0; /* Light text color */
+}
+
+
+.Modal__knowButton{
+  background-color: rgb(66, 163, 98);
+  padding: 5px;
+  margin-left:10px;
+  margin-right:10px;
+  border-radius: 10px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  font-size: 30px;
+}
+
+.Modal__dontknowButton{
+  background-color: rgb(136, 47, 47);
+  padding: 5px;
+  margin-left:10px;
+  margin-right:10px;
+  border-radius: 10px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  font-size: 30px;
+}
+
+.verticalcenter{
+  margin: auto 10px;
+}
+
+.btn-delete{
+  background-color: rgb(136, 47, 47);
+  color: white;
 }
