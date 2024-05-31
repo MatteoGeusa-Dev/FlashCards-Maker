@@ -105,27 +105,12 @@ function App() {
   const [currentCategory, setCurrentCategory] = useState(null);
 
   const handleEditFlashcard = (index, updatedFlashcard) => {
-    const { question, answer, category } = updatedFlashcard; // Aggiungiamo la categoria alla flashcard
-    const originalCategory = flashcards[index].category; // Otteniamo la categoria originale della flashcard
+    const { question, answer, category } = updatedFlashcard;
+    const targetFolderName = selectedFolder ? selectedFolder.name : 'Non categorizzate';
     
-    // Se la categoria è cambiata, spostiamo la flashcard dalla categoria originale alla categoria selezionata
-    if (originalCategory !== currentCategory) {
-      const updatedFolders = folders.map((folder) => {
-        if (folder.name === originalCategory) {
-          const updatedFlashcards = folder.flashcards.filter((flashcard, i) => i !== index);
-          return { ...folder, flashcards: updatedFlashcards };
-        }
-        if (folder.name === currentCategory) {
-          return { ...folder, flashcards: [...folder.flashcards, { question, answer, category }] };
-        }
-        return folder;
-      });
-      setFolders(updatedFolders);
-    }
-  
-    // Aggiorniamo la flashcard nel folder corrente con le modifiche
+    // Modifica la flashcard nell'array delle flashcards del folder corrente
     const updatedFolders = folders.map((folder) => {
-      if (folder.name === currentCategory || folder.name === originalCategory) {
+      if (folder.name === targetFolderName) {
         const updatedFlashcards = folder.flashcards.map((flashcard, i) => {
           if (i === index) {
             return { ...flashcard, question, answer, category };
@@ -136,10 +121,16 @@ function App() {
       }
       return folder;
     });
-  
+    
+    // Aggiorna lo stato con i nuovi folders
     setFolders(updatedFolders);
-    setCurrentCategory(null); // Resettiamo la categoria corrente
+  
+    // Se la flashcard modificata appartiene al folder attualmente selezionato, aggiorna lo stato del folder selezionato
+    if (selectedFolder && selectedFolder.name === targetFolderName) {
+      setSelectedFolder(updatedFolders.find(folder => folder.name === targetFolderName));
+    }
   };
+  
 
   const handleDeleteFlashcard = (index) => {
     const confirmation = window.confirm("Sei sicuro di voler eliminare questa Fleshcard?");
