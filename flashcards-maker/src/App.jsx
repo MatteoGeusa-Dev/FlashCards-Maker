@@ -237,6 +237,7 @@ function FolderForm({ newFolder, onInputChange, onSubmit }) {
         <input
           type="text"
           id="folderName"
+          className='inputnamefolder'
           value={newFolder}
           onChange={onInputChange}
           autoComplete='off'
@@ -312,9 +313,21 @@ function FlashcardForm({ newFlashcard, onInputChange, onSubmit }) {
   );
 }
 
-function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggleIndividualAnswers, handleEditFlashcard, handleDeleteFlashcard }) {
+function FlashcardList({
+  flashcards,
+  showAnswers,
+  toggleShowAnswers,
+  handleToggleIndividualAnswers,
+  handleEditFlashcard,
+  handleDeleteFlashcard,
+}) {
   const [showIndividualAnswers, setShowIndividualAnswers] = useState(true);
   const [editableFlashcard, setEditableFlashcard] = useState(null); // State for tracking the flashcard open for editing
+
+  // States for tracking the collapsed status of each section
+  const [studyCollapsed, setStudyCollapsed] = useState(false);
+  const [reviewCollapsed, setReviewCollapsed] = useState(false);
+  const [doneCollapsed, setDoneCollapsed] = useState(false);
 
   // Function to handle opening the flashcard for editing
   const openEditFlashcard = (index, flashcard) => {
@@ -327,25 +340,40 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
   };
 
   // Separate flashcards based on their status
-  const studyFlashcards = flashcards.filter(flashcard => flashcard.status === 0);
-  const reviewFlashcards = flashcards.filter(flashcard => flashcard.status === 1);
-  const doneFlashcards = flashcards.filter(flashcard => flashcard.status === 2);
+  const studyFlashcards = flashcards.filter((flashcard) => flashcard.status === 0);
+  const reviewFlashcards = flashcards.filter((flashcard) => flashcard.status === 1);
+  const doneFlashcards = flashcards.filter((flashcard) => flashcard.status === 2);
 
   return (
     <>
       <h2>Flashcards</h2>
       <div className="flashcard-list">
         <div className="flashcard-section">
-          <h3>Domande da studiare</h3>
-          {renderFlashcards(studyFlashcards)}
+          <h3>
+            Domande da studiare{' '}
+            <button className='buttontransparent' onClick={() => setStudyCollapsed(!studyCollapsed)}>
+              {studyCollapsed ? '⬇️' : '⬆️'}
+            </button>
+          </h3>
+          {!studyCollapsed && renderFlashcards(studyFlashcards)}
         </div>
         <div className="flashcard-section">
-          <h3>Domande da ripetere</h3>
-          {renderFlashcards(reviewFlashcards)}
+          <h3>
+            Domande da ripetere{' '}
+            <button className='buttontransparent' onClick={() => setReviewCollapsed(!reviewCollapsed)}>
+              {reviewCollapsed ? '⬇️' : '⬆️'}
+            </button>
+          </h3>
+          {!reviewCollapsed && renderFlashcards(reviewFlashcards)}
         </div>
         <div className="flashcard-section">
-          <h3>Domande fatte</h3>
-          {renderFlashcards(doneFlashcards)}
+          <h3>
+            Domande fatte{' '}
+            <button className='buttontransparent' onClick={() => setDoneCollapsed(!doneCollapsed)}>
+              {doneCollapsed ? '⬇️' : '⬆️'}
+            </button>
+          </h3>
+          {!doneCollapsed && renderFlashcards(doneFlashcards)}
         </div>
       </div>
     </>
@@ -358,7 +386,8 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
       <ul>
         {flashcards.map((flashcard, index) => (
           <li key={index} className="flashcard-item">
-            {editableFlashcard && editableFlashcard.index === index ? ( // If the flashcard is open for editing, show the input fields
+            {editableFlashcard && editableFlashcard.index === index ? (
+              // If the flashcard is open for editing, show the input fields
               <FlashcardEditForm
                 flashcard={editableFlashcard}
                 onCancel={closeEditFlashcard}
@@ -369,20 +398,29 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
               />
             ) : (
               <>
-                <div className='centeredfleshcard'>
+                <div className="centeredfleshcard">
                   <strong>Domanda:</strong> {flashcard.question} <br />
-                  <div className='centered'>
+                  <div className="centered">
                     {!showAnswers && showIndividualAnswers && (
                       <button
-                        className='btn btn-flesh'
+                        className="btn btn-flesh"
                         onClick={() => handleToggleIndividualAnswers(flashcard.answer, index)}
                       >
                         Mostra Risposta
                       </button>
                     )}
-                    {showAnswers && <><br /><strong>Risposta:</strong> {flashcard.answer}</>}
-                    <button className='btnedit' onClick={() => openEditFlashcard(index, flashcard)}>Modifica</button>
-                    <button className='btndelete' onClick={() => handleDeleteFlashcard(index)}>Cancella</button>
+                    {showAnswers && (
+                      <>
+                        <br />
+                        <strong>Risposta:</strong> {flashcard.answer}
+                      </>
+                    )}
+                    <button className="btnedit" onClick={() => openEditFlashcard(index, flashcard)}>
+                      Modifica
+                    </button>
+                    <button className="btndelete" onClick={() => handleDeleteFlashcard(index)}>
+                      Cancella
+                    </button>
                   </div>
                 </div>
               </>
@@ -395,12 +433,12 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
 
   function FlashcardEditForm({ flashcard, onCancel, onSave }) {
     const [updatedFlashcard, setUpdatedFlashcard] = useState(flashcard);
-  
+
     const handleInputChange = (e) => {
       const { name, value } = e.target;
       setUpdatedFlashcard({ ...updatedFlashcard, [name]: value });
     };
-  
+
     const handleSubmit = (e) => {
       e.preventDefault();
       onSave(updatedFlashcard);
@@ -428,14 +466,19 @@ function FlashcardList({ flashcards, showAnswers, toggleShowAnswers, handleToggl
             onChange={handleInputChange}
             required
             rows="4"
-            style={{ resize: "vertical" }}
+            style={{ resize: 'vertical' }}
           />
         </div>
-        <button type="submit" className="btn btn-secondary">Salva</button>
-        <button type="button" className="btn btn-secondary" onClick={onCancel}>Cancella</button>
+        <button type="submit" className="btn btn-secondary">
+          Salva
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+          Cancella
+        </button>
       </form>
     );
   }
 }
+
 
 export default App;

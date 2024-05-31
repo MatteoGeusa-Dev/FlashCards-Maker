@@ -225,7 +225,8 @@ hr {
   flex-direction: column;
   padding-left: 100px;
   padding-right: 100px;
-  min-width: 300px;
+
+  
 }
 
 .btnedit {
@@ -314,7 +315,102 @@ hr {
   margin: auto 10px;
 }
 
+.buttontransparent{
+  background-color: transparent;
+  border: 0;
+  font-size:20px;
+}
+
 .btn-delete{
   background-color: rgb(136, 47, 47);
   color: white;
+}
+
+.inputnamefolder{
+  max-height: 40px;
+  min-width: 200px;
+}
+
+
+@media (max-width: 880px) {
+  .App {
+    flex-direction: column;
+    
+  }
+
+  .App-main {
+    flex-direction: column-reverse;
+    padding: 10px;
+  }
+
+  .main-content, .sidebar {
+    margin-right: 0;
+    margin-bottom: 20px;
+    max-height: none;
+  }
+
+  .sidebar {
+    flex-direction: column;
+    order: -1; /* Move sidebar above main content */
+  }
+
+  .form-group textarea, .form-group input {
+    padding: 10px;
+    height: 200px;
+  }
+  .folder-item, .flashcard-item {
+    font-size: 14px;
+    min-width: auto;
+  }
+
+  .btn, .Modal__CloseButton, .btnedit, .btndelete {
+    padding: 8px 12px;
+    margin: 5px;
+    font-size: 14px;
+  }
+
+  .modaltextarea {
+    height: 300px;
+  }
+
+  .modalsize {
+    min-width: 600px;
+    max-height: 500px;
+  }
+  .foldersss{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .form-group textarea, .form-group input {
+    padding: 10px;
+    height: 200px;
+  }
+
+  .folder-item, .flashcard-item {
+    font-size: 14px;
+    min-width: auto;
+  }
+
+  .btn, .Modal__CloseButton, .btnedit, .btndelete {
+    padding: 8px 12px;
+    margin: 5px;
+    font-size: 14px;
+  }
+
+  .modaltextarea {
+    height: 300px;
+  }
+
+  .modalsize {
+    min-width: 300px;
+    max-height: 450px;
+  }
+  .foldersss{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
