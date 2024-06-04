@@ -187,6 +187,22 @@ function App() {
     setShowModal(true);
   };
 
+  const downloadCSV = () => {
+    const csvContent = "data:text/csv;charset=utf-8," + folders.map(folder => {
+      return folder.flashcards.map(flashcard => {
+        return `[${flashcard.question}]\n${flashcard.answer.replace(/\n/g, '\\n')}\n\n\n`;
+      }).join("\n");
+    }).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "flashcards.csv");
+    document.body.appendChild(link); // Required for FF
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -222,6 +238,7 @@ function App() {
               selectedFolder={selectedFolder}
             />
           </div>
+          <button className="btn btn-primary" onClick={downloadCSV}>Download CSV</button>
         </div>
       </main>
       <Modal
