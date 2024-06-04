@@ -190,10 +190,12 @@ function App() {
   const downloadCSV = () => {
     const csvContent = "data:text/csv;charset=utf-8," + folders.map(folder => {
       return folder.flashcards.map(flashcard => {
-        return `[${flashcard.question}]\n${flashcard.answer.replace(/\n/g, '\\n')}\n\n\n`;
+        const question = flashcard.question.replace(/"/g, '""');
+        const answer = flashcard.answer.replace(/"/g, '""').replace(/\n/g, '\n');
+        return `[${question}]\n-------------------------\n${answer}\n-------------------------\n\n\n`;
       }).join("\n");
     }).join("\n");
-
+  
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -202,6 +204,8 @@ function App() {
     link.click();
     document.body.removeChild(link);
   };
+  
+
 
   return (
     <div className="App">
@@ -210,6 +214,7 @@ function App() {
       </header>
       <main className="App-main">
         <div className="main-content">
+        <button className="btn btn-primary" onClick={downloadCSV}>Download CSV</button>
           <FlashcardList
             flashcards={currentFolder.flashcards}
             showAnswers={showAnswers}
@@ -237,9 +242,11 @@ function App() {
               onDeleteFolder={handleDeleteFolder}
               selectedFolder={selectedFolder}
             />
+            
           </div>
-          <button className="btn btn-primary" onClick={downloadCSV}>Download CSV</button>
+          
         </div>
+        
       </main>
       <Modal
         className='modalsize'
