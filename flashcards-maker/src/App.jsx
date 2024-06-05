@@ -188,22 +188,23 @@ function App() {
   };
 
   const downloadCSV = () => {
-    const csvContent = "data:text/csv;charset=utf-8," + folders.map(folder => {
-      return folder.flashcards.map(flashcard => {
-        const question = flashcard.question.replace(/"/g, '""');
-        const answer = flashcard.answer.replace(/"/g, '""').replace(/\n/g, '\n');
-        return `[${question}]\n-------------------------\n${answer}\n-------------------------\n\n\n`;
-      }).join("\n");
+    if (!selectedFolder) return; // If no folder is selected, do nothing
+  
+    const csvContent = "data:text/csv;charset=utf-8," + selectedFolder.flashcards.map(flashcard => {
+      const question = flashcard.question.replace(/"/g, '""');
+      const answer = flashcard.answer.replace(/"/g, '""').replace(/\n/g, '\n');
+      return `[${question}]\n-------------------------\n${answer}\n-------------------------\n\n\n`;
     }).join("\n");
   
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "flashcards.csv");
+    link.setAttribute("download", `${selectedFolder.name}.csv`);
     document.body.appendChild(link); // Required for FF
     link.click();
     document.body.removeChild(link);
   };
+  
   
 
 
